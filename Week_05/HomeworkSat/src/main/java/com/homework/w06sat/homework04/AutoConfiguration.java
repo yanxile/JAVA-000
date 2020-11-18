@@ -1,5 +1,6 @@
 package com.homework.w06sat.homework04;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,13 +11,13 @@ import java.util.List;
 @Configuration
 public class AutoConfiguration {
 
-    @Bean
+    @Bean(name = "student100")
     Student student100() {
         return new Student(100, "小红");
     }
 
-    @Bean
-    List<Student> students() {
+    @Bean(name = "studentList")
+    List<Student> getStudents() {
         List<Student> list = new ArrayList();
         list.add(new Student(1, "小王"));
         list.add(new Student(2, "小李"));
@@ -25,14 +26,14 @@ public class AutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(name = "students")
-    Klass class1(List<Student> students) {
+    @ConditionalOnBean(name = "studentList")
+    Klass class1(@Qualifier(value="studentList")List<Student> students) {
         return new Klass(students);
     }
 
     @Bean
     @ConditionalOnBean(name = {"class1","student100"})
-    School school(Klass class1, Student student100) {
+    School school(@Qualifier(value="class1")Klass class1, @Qualifier(value="student100")Student student100) {
         return new School(class1, student100);
     }
 }
